@@ -14,20 +14,18 @@ export default function Slug(props) {
 
 }
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: true
-  }
-}
+// export async function getStaticPaths() {
+//   return {
+//     paths: [],
+//     fallback: true
+//   }
+// }
 
-export async function getStaticProps(ctx) {
-  const slug = ctx.params.slug
-  const url = slug && path.join("/", ...(Array.isArray(slug) ? slug : [slug]))
+export async function getServerSideProps(ctx) {
+  const url = ctx.req.url
   if (url.includes("not-found")) {
     return {
-      notFound: true,
-      revalidate: 1
+      notFound: true
     }
   }
 
@@ -36,8 +34,7 @@ export async function getStaticProps(ctx) {
       redirect: {
         destination: "/redirected",
         permanent: true
-      },
-      revalidate: 1
+      }
     }
   }
 
@@ -45,15 +42,13 @@ export async function getStaticProps(ctx) {
     return {
       props: {
         content: "This is a page we redirected to"
-      },
-      revalidate: 1
+      }
     }
   }
   
   return {
     props: {
       content: "This is a page without redirect"
-    },
-    revalidate: 1
+    }
   }
 }
